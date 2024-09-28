@@ -2,6 +2,7 @@
 
 Usuari::Usuari(string n, string c, string dni, int e, string email)
 {
+	this->id = -1;
 	this->nom = n;
 	this->cognoms = c;
 	this->dni = dni;
@@ -9,8 +10,17 @@ Usuari::Usuari(string n, string c, string dni, int e, string email)
 	this->email = email;
 }
 
+Usuari::Usuari()
+{
+}
+
 Usuari::~Usuari()
 {
+}
+
+void Usuari::setId(int id)
+{
+	this->id = id;
 }
 
 void Usuari::setNom(std::string nom)
@@ -36,6 +46,11 @@ void Usuari::setEdat(int edat)
 void Usuari::setEmail(std::string email)
 {
 	this->email = email;
+}
+
+int Usuari::getId() const
+{
+	return (this->id);
 }
 
 std::string Usuari::getNom() const

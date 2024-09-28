@@ -1,5 +1,9 @@
 #include "../inc/Activitat.hpp"
 
+Activitat::Activitat()
+{
+}
+
 Activitat::Activitat(string nom, string desc, int capacitat)
 {
 	this->nom = nom;
@@ -9,6 +13,11 @@ Activitat::Activitat(string nom, string desc, int capacitat)
 
 Activitat::~Activitat()
 {}
+
+void Activitat::setId(int id)
+{
+	this->id = id;
+}
 
 void Activitat::setNom(string nom)
 {
@@ -23,6 +32,11 @@ void Activitat::setDescripcio(string desc)
 void Activitat::setCapacitatMaxima(int cm)
 {
 	this->capacitat_maxima = cm;
+}
+
+int Activitat::getId() const
+{
+	return (this->id);
 }
 
 string Activitat::getNom() const
