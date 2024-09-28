@@ -2,6 +2,8 @@
 
 # include <mysql_driver.h>
 # include <mysql_connection.h>
+# include <string>
+# include <vector>
 # include <memory>
 # include <cppconn/prepared_statement.h>
 # include <cppconn/resultset.h>
@@ -13,7 +15,7 @@ class SqlManager
 {
 	private:
 		sql::mysql::MySQL_Driver			*driver;
-		std::unique_ptr<sql::Connection>	connection;
+		std::shared_ptr<sql::Connection>	connection;
 		string sqlUser;
 		string sqlPassword;
 		string sqlDataBase;
@@ -34,6 +36,7 @@ class SqlManager
 		bool removeActivitat(int id);
 		Activitat getActivitat(int id);
 		bool updateActivitat(int id, const Activitat &a);
+		std::vector<Activitat> getAllActivitats();
 
 		//Inscripcions
 		bool apuntarseActivitat(int usuariID, int activitatId);

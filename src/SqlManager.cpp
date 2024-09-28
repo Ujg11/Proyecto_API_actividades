@@ -5,6 +5,9 @@ SqlManager::SqlManager()
 	this->driver = sql::mysql::get_mysql_driver_instance();
 	this->connection.reset(driver->connect("tcp://127.0.0.1:3306", "ojimenez", "xxxx"));
 	this->connection->setSchema("API_Activitats_db");
+	this->sqlUser = "ojimenez";
+	this->sqlPassword = "xxxx";
+	this->sqlDataBase = "API_Activitats_db";
 }
 
 SqlManager::SqlManager(string sqlUser, string sqlPassword, string sqlDataBase)
@@ -277,6 +280,32 @@ bool SqlManager::updateActivitat(int id, const Activitat &a)
 		return (false);
 	}
 	return (true);
+}
+
+std::vector<Activitat> SqlManager::getAllActivitats()
+{
+	std::vector<Activitat> activitats;
+	try
+	{
+		std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement(
+			"SELECT * FROM activitats"
+		));
+		std::unique_ptr<sql::ResultSet> res(statement->executeQuery());
+		while (res->next())
+		{
+			Activitat a;
+			a.setId(res->getInt("id"));
+            a.setNom(res->getString("nom"));
+            a.setDescripcio(res->getString("descripcio"));
+            a.setCapacitatMaxima(res->getInt("capacitat_maxima"));
+			activitats.push_back(a);
+		}
+	}
+	catch(sql::SQLException &e)
+	{
+		std::cerr << "Error de SQL" << e.what() << std::endl;
+	}
+	return (activitats);
 }
 
 bool SqlManager::apuntarseActivitat(int usuariID, int activitatId)
