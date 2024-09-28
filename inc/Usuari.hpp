@@ -9,11 +9,11 @@ using namespace std;
 class Usuari
 {
 	private:
-		std::string	nom;
-		std::string	cognoms;
-		std::string dni;
+		string	nom;
+		string	cognoms;
+		string dni;
 		int			edat;
-		std::string	email;
+		string	email;
 		
 	public:
 		Usuari(string n, string c, string dni, int e, string email);
