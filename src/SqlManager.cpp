@@ -1,20 +1,19 @@
 #include "../inc/SqlManager.hpp"
 
-SqlManager::SqlManager()
+SqlManager::SqlManager(string sqlUser, string sqlPassword)
 {
-	this->driver = sql::mysql::get_mysql_driver_instance();
-	this->connection.reset(driver->connect("tcp://127.0.0.1:3306", "ojimenez", "xxxx"));
-	this->connection->setSchema("API_Activitats_db");
-	this->sqlUser = "ojimenez";
-	this->sqlPassword = "xxxx";
-	this->sqlDataBase = "API_Activitats_db";
-}
-
-SqlManager::SqlManager(string sqlUser, string sqlPassword, string sqlDataBase)
-{
-	this->driver = sql::mysql::get_mysql_driver_instance();
-	this->connection.reset(driver->connect("tcp://127.0.0.1:3306", sqlUser, sqlPassword));
-	this->connection->setSchema(sqlDataBase);
+	try
+	{
+		this->driver = sql::mysql::get_mysql_driver_instance();
+		this->connection.reset(driver->connect("tcp://127.0.0.1:3306", sqlUser, sqlPassword));
+		this->connection->setSchema("API_Activitats_db");
+	}
+	catch (sql::SQLException &e) {
+        std::cerr << "Error de connexió a la base de dades: " << e.what() << std::endl;
+        std::cerr << "Codi d'error MySQL: " << e.getErrorCode() << std::endl;
+        std::cerr << "Estat SQL: " << e.getSQLState() << std::endl;
+		exit(EXIT_FAILURE);
+    }
 }
 
 SqlManager::~SqlManager()

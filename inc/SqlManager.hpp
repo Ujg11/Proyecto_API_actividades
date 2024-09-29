@@ -21,8 +21,7 @@ class SqlManager
 		string sqlDataBase;
 
 	public:
-		SqlManager();
-		SqlManager(string sqlUser, string sqlPassword, string sqlDataBase);
+		SqlManager(string sqlUser, string sqlPassword);
 		~SqlManager();
 
 		//Usuaris
