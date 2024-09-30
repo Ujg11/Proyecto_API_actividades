@@ -1,4 +1,4 @@
-# Proyecto_API_actividades
+# Prjecte_API_activitats
 
 ## Introducció
 Prova tècnica per assistir al Hackató del Saló de l'Ocupació.
@@ -17,7 +17,8 @@ git clone <url_del_repositori>
 ```
 
 ### 2- Compilar el projecte:
-S'utilitza Makefile. Per compilar el projecte, simplement cal posar `make` a la terminal i es crearà el binari `api`.Per borrar els arxius objecte `.o`,executa:
+S'utilitza Makefile. Primer de tot s'ha de modificar el fitxer db_config.mk i canviar les variables per l'usuari i la contrassenya del sql. Aquest fitxer l'utilitzara el Makefile per fer la compilació.
+Per compilar el projecte, simplement cal posar `make` a la terminal i es crearà el binari `api`.Per borrar els arxius objecte `.o`,executa:
 ```bash
 make clean
 ```
@@ -45,17 +46,17 @@ curl -X POST http://localhost:8080/appActivitats/user -H "Content-Type: applicat
 
 ###### Actualitzar Usuari:
 ```bash
-curl -X PUT http://localhost:8080/appActivitats/users/1 \ -H "Content-Type: application/json" \ -d '{"nom": "Juan", "cognoms": "Pérez", "dni": "12345678A", "edat": 31, "email": "juan.perez@example.com"}' 
+curl -X PUT http://localhost:8080/appActivitats/users/1 \ -H "Content-Type: application/json" \ -d '{"nom": "Juan", "cognoms": "Pérez", "dni": "12345678A", "edat": 31, "email": "juan.perez@example.com"}'
 ```
 
 ###### Obtenir Usuari:
 ```bash
-curl -X GET http://localhost:8080/appActivitats/users/1
+curl -X GET http://localhost:8080/appActivitats/users/1 -w "\n"
 ```
 
 ###### Eliminar Usuari:
 ```bash
-curl -X DELETE http://localhost:8080/appActivitats/users/1
+curl -X DELETE http://localhost:8080/appActivitats/users/1 -w "\n"
 ```
 
 ###### Crear Activitat:
@@ -67,27 +68,27 @@ curl -X POST http://localhost:8080/appActivitats/activitats \
 
 ###### Obtenir Activitat:
 ```bash
-curl -X GET http://localhost:8080/appActivitats/activitats/1
+curl -X GET http://localhost:8080/appActivitats/activitats/1 -w "\n"
 ```
 
 ###### Eliminar Activitat:
 ```bash
-curl -X DELETE http://localhost:8080/appActivitats/activitats/1
+curl -X DELETE http://localhost:8080/appActivitats/activitats/1 -w "\n"
 ```
 
 ###### Apuntar Usuari a Activitat: (id usuari, id activitat)
 ```bash
-curl -X POST http://localhost:8080/appActivitats/activitats/1/apuntar/1
+curl -X POST http://localhost:8080/appActivitats/activitats/1/apuntar/1 -w "\n"
 ```
 
 ###### Desapuntar Usuari de l’Activitat: (id usuari, id activitat)
 ```bash
-curl -X POST http://localhost:8080/appActivitats/activitats/1/desapuntar/1
+curl -X POST http://localhost:8080/appActivitats/activitats/1/desapuntar/1 -w "\n"
 ```
 
 ###### Exportar Activitats:
 ```bash
-curl -X GET http://localhost:8080/appActivitats/activitats/exportar
+curl -X GET http://localhost:8080/appActivitats/activitats/exportar -w "\n"
 ```
 
 ###### Importar Activitats:
