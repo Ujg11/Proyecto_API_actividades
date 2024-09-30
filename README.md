@@ -1,4 +1,4 @@
-# Proyecto_API_actividades
+# Prjecte_API_activitats
 
 ## Introducció
 Prova tècnica per assistir al Hackató del Saló de l'Ocupació.
