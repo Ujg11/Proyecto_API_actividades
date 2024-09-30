@@ -9,11 +9,11 @@ SqlManager::SqlManager(string sqlUser, string sqlPassword)
 		this->connection->setSchema("API_Activitats_db");
 	}
 	catch (sql::SQLException &e) {
-        std::cerr << "Error de connexió a la base de dades: " << e.what() << std::endl;
-        std::cerr << "Codi d'error MySQL: " << e.getErrorCode() << std::endl;
-        std::cerr << "Estat SQL: " << e.getSQLState() << std::endl;
+		std::cerr << "Error de connexió a la base de dades: " << e.what() << std::endl;
+		std::cerr << "Codi d'error MySQL: " << e.getErrorCode() << std::endl;
+		std::cerr << "Estat SQL: " << e.getSQLState() << std::endl;
 		exit(EXIT_FAILURE);
-    }
+	}
 }
 
 SqlManager::~SqlManager()
@@ -143,7 +143,7 @@ bool SqlManager::updateUsuari(int id, const Usuari &u)
 			std::cout << "Usuari amb Id: " << id << " actualitzat" << std::endl;
 		else
 		{
-			std::cerr << "Usuari amb Id: " << id << " no trobat" << std::endl;
+			std::cerr << "Usuari amb Id: " << id << " no trobat o desat sense canvis" << std::endl;
 			return (false);
 		}
 	}
@@ -269,7 +269,7 @@ bool SqlManager::updateActivitat(int id, const Activitat &a)
 			std::cout << "Activitat amb Id: " << id << " actualitzada" << std::endl;
 		else
 		{
-			std::cerr << "Activitat amb Id: " << id << " no trobada" << std::endl;
+			std::cerr << "Activitat amb Id: " << id << " no trobada o desada sense canvis" << std::endl;
 			return (false);
 		}
 	}
@@ -294,9 +294,9 @@ std::vector<Activitat> SqlManager::getAllActivitats()
 		{
 			Activitat a;
 			a.setId(res->getInt("id"));
-            a.setNom(res->getString("nom"));
-            a.setDescripcio(res->getString("descripcio"));
-            a.setCapacitatMaxima(res->getInt("capacitat_maxima"));
+			a.setNom(res->getString("nom"));
+			a.setDescripcio(res->getString("descripcio"));
+			a.setCapacitatMaxima(res->getInt("capacitat_maxima"));
 			activitats.push_back(a);
 		}
 	}

@@ -104,16 +104,17 @@ void Server::processarSolicitud(int clientSock)
 		}
 	}
 	std::string response;
+	
 	if (order == "POST" && startsWith(path, "/appActivitats/user"))
 	{
 		json jsonData = json::parse(body);
-		response = createUsuari(jsonData);
+		response = createUsuari(jsonData.dump());
 	}
 	else if (order == "PUT" && startsWith(path, "/appActivitats/users/"))
 	{
 		int id = std::stoi(path.substr(21));
 		json jsonData = json::parse(body);
-		response = updateUsuari(id, jsonData);
+		response = updateUsuari(id, jsonData.dump());
 	}
 	else if (order == "GET" && startsWith(path, "/appActivitats/users/"))
 	{
@@ -128,9 +129,9 @@ void Server::processarSolicitud(int clientSock)
 	else if (order == "POST" && path == "/appActivitats/activitats")
 	{
 		json jsonData = json::parse(body);
-		response = createActivitat(jsonData);
+		response = createActivitat(jsonData.dump());
 	}
-	else if (order == "GET" && startsWith(path, "/appActivitats/activitats/"))
+	else if (order == "GET" && startsWith(path, "/appActivitats/activitats/") && path.find("exportar") == std::string::npos)
 	{
 		int id = std::stoi(path.substr(26));
 		response = getActivitat(id);
@@ -140,7 +141,8 @@ void Server::processarSolicitud(int clientSock)
 		int id = std::stoi(path.substr(26));
 		response = deleteActivitat(id);
 	}
-	else if (order == "POST" && path.find("/appActivitats/activitats/") != std::string::npos && path.find("/apuntar/") != std::string::npos)
+	else if (order == "POST" && path.find("/appActivitats/activitats/") != std::string::npos && path.find("/apuntar/") != std::string::npos
+		&& path.find("/desapuntar/") == std::string::npos)
 	{
 		size_t startId1 = path.find("/activitats/") + strlen("/activitats/");
 		size_t endId1 = path.find("/apuntar/");
@@ -160,7 +162,7 @@ void Server::processarSolicitud(int clientSock)
 		std::string id2Str = path.substr(startId2);
 		int idUsr = std::stoi(id1Str);
 		int idAct = std::stoi(id2Str);
-		response = apuntarActivitat(idUsr, idAct);
+		response = desapuntarActivitat(idUsr, idAct);
 	}
 	else if (order == "GET" && startsWith(path, "/appActivitats/activitats/exportar"))
 	{
@@ -169,9 +171,19 @@ void Server::processarSolicitud(int clientSock)
 	else if (order == "POST" && startsWith(path, "/appActivitats/activitats/importar"))
 	{
 		json jsonData = json::parse(body);
-		response = importarActivitats(jsonData);
+		response = importarActivitats(jsonData.dump());
 	}
+	else
+		response = "{\"message\": \"Opció no trobada\"}";
+	sendResponse(response, clientSock);
+}
 
+void Server::sendResponse(std::string &s, int clientSock)
+{
+	std::string response = "HTTP/1.1 200 OK\r\n"
+						   "Content-Type: application/json\r\n"
+						   "Content-Length: " + std::to_string(s.size()) + "\r\n"
+						   "\r\n" + s + "\n";
 	write(clientSock, response.c_str(), response.length());
 	close(clientSock);
 }
@@ -190,16 +202,16 @@ std::string Server::createUsuari(const std::string &jsonData)
 			usuari.setEdat(input["edat"]);
 			usuari.setEmail(input["email"]);
 			if (sqlManager.addUsuari(usuari))
-				return ("Usuari creat");
+				return ("{\"message\": \"Usuari creat\"}");
 			else
-				return ("Error en la creació del usuari");
+				return ("{\"message\": \"Error en crear l'usuari\"}");
 		}
 		else
-			return ("Error al crear l'usuari, els camps no son els correctes");
+			return ("{\"message\": \"Error, falten camps en l'usuario\"}");
 	}
 	catch(json::parse_error &e)
 	{
-		return ("Error al parsejar JSON");
+		return ("{\"message\": \"Error al parsejar el JSON\"}");
 	}
 }
 
@@ -209,20 +221,24 @@ std::string Server::updateUsuari(int id, const std::string &jsonData)
 	{
 		json input = json::parse(jsonData);
 		Usuari usuari;
-		usuari.setNom(input["nom"]);
-		usuari.setCognoms(input["cognoms"]);
-		usuari.setDni(input["dni"]);
-		usuari.setEdat(input["edat"]);
-		usuari.setEmail(input["email"]);
-
-		if (sqlManager.updateUsuari(id, usuari))
-			return ("usuari actualitzat");
+		if (input.contains("nom") && input.contains("cognoms") && input.contains("dni") && input.contains("edat") && input.contains("email"))
+		{
+			usuari.setNom(input["nom"]);
+			usuari.setCognoms(input["cognoms"]);
+			usuari.setDni(input["dni"]);
+			usuari.setEdat(input["edat"]);
+			usuari.setEmail(input["email"]);
+			if (sqlManager.updateUsuari(id, usuari))
+				return ("{\"message\": \"Usuari actualitzat\"}");
+			else
+				return ("{\"message\": \"Error, usuari no trobat\"}");
+		}
 		else
-			return ("Usuari no trobat");
+			return ("{\"message\": \"Error, falten camps en l'usuario\"}");
 	}
 	catch(json::parse_error &e)
 	{
-		return ("Error al parsejar JSON");
+		return ("{\"message\": \"Error al parsejar el JSON\"}");
 	}
 }
 
@@ -232,7 +248,7 @@ std::string Server::getUsuari(int id)
 	{
 		Usuari u = sqlManager.getUsuari(id);
 		if (u.getId() == -1)
-			return ("Usuari no trobat");
+			return ("{\"message\": \"Usuari no trobat\"}");
 		json output;
 		output["nom"] = u.getNom();
 		output["cognoms"] = u.getCognoms();
@@ -243,7 +259,7 @@ std::string Server::getUsuari(int id)
 	}
 	catch(json::parse_error &e)
 	{
-		return ("Error al parsejar JSON");
+		return ("{\"message\": \"Error al parsejar el JSON\"}");
 	}
 }
 
@@ -252,13 +268,13 @@ std::string Server::deleteUsuari(int id)
 	try
 	{
 		if (sqlManager.removeUsuari(id))
-			return ("Usuari eliminat");
+			return ("{\"message\": \"Usuari eliminat\"}");
 		else
-			return ("Usuari no trobat");
+			return ("{\"message\": \"Usuari no trobat\"}");
 	}
 	catch(json::parse_error &e)
 	{
-		return ("Error al parsejar JSON");
+		return ("{\"message\": \"Error al parsejar el JSON\"}");
 	}
 }
 
@@ -268,18 +284,22 @@ std::string Server::createActivitat(const std::string &jsonData)
 	{
 		json input = json::parse(jsonData);
 		Activitat novaAct;
-		novaAct.setNom(input["nom"]);
-		novaAct.setDescripcio(input["descripcio"]);
-		novaAct.setCapacitatMaxima(input["capacitat_màxima"]);
-
-		if (sqlManager.addActivitat(novaAct))
-			return ("Activitat creada");
+		if (input.contains("nom") && input.contains("descripcio") && input.contains("capacitat_maxima"))
+		{
+			novaAct.setNom(input["nom"]);
+			novaAct.setDescripcio(input["descripcio"]);
+			novaAct.setCapacitatMaxima(input["capacitat_maxima"]);
+			if (sqlManager.addActivitat(novaAct))
+				return ("{\"message\": \"Activitat creada\"}");
+			else
+				return ("{\"message\": \"Error al crear l'activitat\"}");
+		}
 		else
-			return ("Error en la creació de l'activitat");
+			return ("{\"message\": \"Error, falten camps en l'activitat\"}");
 	}
 	catch(json::parse_error &e)
 	{
-		return ("Error al parsejar JSON");
+		return ("{\"message\": \"Error al parsejar el JSON\"}");
 	}
 }
 
@@ -289,7 +309,7 @@ std::string Server::getActivitat(int id)
 	{
 		Activitat act = sqlManager.getActivitat(id);
 		if (act.getId() == -1)
-			return ("Activitat no trobada");
+			return ("{\"message\": \"Error, activitat no trobada\"}");
 		json output;
 		output["nom"] = act.getNom();
 		output["descripcio"] = act.getDescripcio();
@@ -298,7 +318,7 @@ std::string Server::getActivitat(int id)
 	}
 	catch(json::parse_error &e)
 	{
-		return ("Error al parsejar JSON");
+		return ("{\"message\": \"Error al parsejar el JSON\"}");
 	}
 }
 
@@ -307,14 +327,14 @@ std::string Server::deleteActivitat(int id)
 	try
 	{
 		if (sqlManager.removeActivitat(id)) {
-			return ("Activitat eliminada");
+			return ("{\"message\": \"Activitat eliminada correctament\"}");
 		} else {
-			return ("Activitat no trobada");
+			return ("{\"message\": \"Error, activitat no trobada\"}");
 		}
 	}
 	catch(json::parse_error &e)
 	{
-		return ("Error al parsejar JSON");
+		return ("{\"message\": \"Error al parsejar el JSON\"}");
 	}
 }
 
@@ -323,13 +343,13 @@ std::string Server::apuntarActivitat(int idUsr, int idAct)
 	try
 	{
 		if (sqlManager.apuntarseActivitat(idUsr, idAct))
-			return ("Usuari apuntat a l'activitat");
+			return ("{\"message\": \"Usuari apuntat a l'activitat\"}");
 		else
-			return ("Error al apuntar l'usuari a l'activitat");
+			return ("{\"message\": \"Error al apuntar a l'usuari\"}");
 	}
 	catch(json::parse_error &e)
 	{
-		return ("Error al parsejar JSON");
+		return ("{\"message\": \"Error al parsejar el JSON\"}");
 	}
 }
 
@@ -338,13 +358,13 @@ std::string Server::desapuntarActivitat(int idUsr, int idAct)
 	try
 	{
 		if (sqlManager.desapuntarseActivitat(idUsr, idAct))
-			return ("Usuari desapuntat de l'activitat");
+			return ("{\"message\": \"Usuari desapuntat a l'activitat\"}");
 		else
-			return ("Error al desapuntar l'usuari de l'activitat");
+			return ("{\"message\": \"Error al desapuntar a l'usuari\"}");
 	}
 	catch(json::parse_error &e)
 	{
-		return ("Error al parsejar JSON");
+		return ("{\"message\": \"Error al parsejar el JSON\"}");
 	}
 }
 
@@ -362,12 +382,12 @@ std::string Server::exportarActivitats()
 		output.push_back(actJson);
 	}
 	std::string jsonString = output.dump();
-	std::ofstream outFile("activitats.json");
+	/*std::ofstream outFile("activitats.json");
 	if (outFile.is_open())
 	{
 		outFile << jsonString;
 		outFile.close();
-	}
+	}*/
 	return (jsonString);
 }
 
@@ -377,18 +397,23 @@ std::string Server::importarActivitats(const std::string &jsonData)
 	try
 	{
 		input = json::parse(jsonData);
+		for (const auto &actJson : input)
+		{
+			Activitat novaAct;
+			if (actJson.contains("nom") && actJson.contains("descripcio") && actJson.contains("capacitat_maxima"))
+			{
+				novaAct.setNom(actJson["nom"]);
+				novaAct.setDescripcio(actJson["descripcio"]);
+				novaAct.setCapacitatMaxima(actJson["capacitat_maxima"]);
+				sqlManager.addActivitat(novaAct);
+			}
+			else
+				return ("{\"message\": \"Error en l'import, falten camps en alguna activitat\"}");
+		}
+		return ("{\"message\": \"L'import ha estat unèxit\"}");
 	}
 	catch(json::parse_error &e)
 	{
-		return ("Error al parsejar JSON");
+		return ("{\"message\": \"Error al parsejar el JSON\"}");
 	}
-	for (const auto &actJson : input)
-	{
-		Activitat novaAct;
-		novaAct.setNom(actJson["nom"]);
-		novaAct.setDescripcio(actJson["descripcio"]);
-		novaAct.setCapacitatMaxima(actJson["capacitat_maxima"]);
-		sqlManager.addActivitat(novaAct);
-	}
-	return ("L'import ha estat un èxit");
 }

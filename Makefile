@@ -5,8 +5,6 @@ SRCS = main.cpp src/Usuari.cpp src/Activitat.cpp src/SqlManager.cpp src/Server.c
 OBJS = $(SRCS:.cpp=.o)
 
 # Directoris llibreria mysql connector/C++
-#MYSQL_INCLUDE_DIR = /home/ojimenez/Documentos/mysql-connector-c++-9.0.0-linux-glibc2.28-x86-64bit/include/jdbc
-#MYSQL_LIB_DIR = /home/ojimenez/Documentos/mysql-connector-c++-9.0.0-linux-glibc2.28-x86-64bit/lib64
 MYSQL_INCLUDE_DIR = ./lib/mysql/include/jdbc
 MYSQL_LIB_DIR = ./lib/mysql/lib64
 
@@ -20,7 +18,6 @@ CXXFLAGS = -Wall -Wextra -Werror -std=c++11 -I$(MYSQL_INCLUDE_DIR)
 include db_config.mk
 
 DB_SQL = create_database.sql
-
 
 all: create_db $(NAME)
 

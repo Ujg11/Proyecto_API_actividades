@@ -14,22 +14,22 @@ using json = nlohmann::json;
 
 class Server
 {
-    private:
-        int port;
-        int servSocket;
-        struct sockaddr_in direccio;
-        SqlManager &sqlManager;
-        
-        
-    public:
-        Server(SqlManager &sqlManager);
-        ~Server();
-        
-        void iniciar();
-        void processarSolicitud(int clientSock);
+	private:
+		int port;
+		int servSocket;
+		struct sockaddr_in direccio;
+		SqlManager &sqlManager;
+		
+	public:
+		Server(SqlManager &sqlManager);
+		~Server();
+		
+		void iniciar();
+		void processarSolicitud(int clientSock);
+		void sendResponse(std::string &s, int clientSock);
 
-        //Usuaris
-        std::string createUsuari(const std::string &jsonData);
+		//Usuaris
+		std::string createUsuari(const std::string &jsonData);
 		std::string updateUsuari(int id, const std::string &jsonData);
 		std::string getUsuari(int id);
 		std::string deleteUsuari(int id);
