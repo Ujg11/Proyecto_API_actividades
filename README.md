@@ -36,7 +36,7 @@ Per executar el projecte cal fer el següent:
 S'ha d'executar amb un usuari que tingui permís de MySQL per poder crear la taula de dades.
 
 ### 4- Funcionament:
-Alexecutar es podra veure que el servidor esta escoltant al port 8080 i espera a rebre conexions amb la informació adeqüada. Per probar el projecte desde la terminal podem fer el següent:
+Alexecutar es podra veure que el servidor esta escoltant al port 8080 i espera a rebre conexions amb la informació adeqüada. Per probar el projecte desde la terminal podem fer com en els següents exemples:
 
 ###### Crear Usuari:
 ```bash
