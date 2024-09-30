@@ -26,26 +26,26 @@ class Server
 		
 		void iniciar();
 		void processarSolicitud(int clientSock);
-		void sendResponse(std::string &s, int clientSock);
+		void sendResponse(std::string &s, int clientSock, int msg);
 
 		//Usuaris
-		std::string createUsuari(const std::string &jsonData);
-		std::string updateUsuari(int id, const std::string &jsonData);
-		std::string getUsuari(int id);
-		std::string deleteUsuari(int id);
+		std::string createUsuari(const std::string &jsonData, int *msg);
+		std::string updateUsuari(int id, const std::string &jsonData, int *msg);
+		std::string getUsuari(int id, int *msg);
+		std::string deleteUsuari(int id, int *msg);
 
 		//Activitats
-		std::string createActivitat(const std::string &jsonData);
-		std::string getActivitat(int id);
-		std::string deleteActivitat(int id);
+		std::string createActivitat(const std::string &jsonData, int *msg);
+		std::string getActivitat(int id, int *msg);
+		std::string deleteActivitat(int id, int *msg);
 
 		//Inscripcions
-		std::string apuntarActivitat(int idUsr, int idAct);
-		std::string desapuntarActivitat(int idUsr, int idAct);
+		std::string apuntarActivitat(int idUsr, int idAct, int *msg);
+		std::string desapuntarActivitat(int idUsr, int idAct, int *msg);
 
 		//Importació/Exportació de JSON
 		std::string exportarActivitats();
-		std::string importarActivitats(const std::string &jsonData);
+		std::string importarActivitats(const std::string &jsonData, int *msg);
 };
 
 
