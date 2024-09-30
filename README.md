@@ -41,12 +41,12 @@ Alexecutar es podra veure que el servidor esta escoltant al port 8080 i espera a
 
 ###### Crear Usuari:
 ```bash
-curl -X POST http://localhost:8080/appActivitats/user -H "Content-Type: application/json" -d '{"nom": "Juan", "cognoms": "Pérez", "dni": "46099155W" , "edat": 30, "email": "juan.perez@example.com"}' -w "\n"
+curl -X POST http://localhost:8080/appActivitats/user -H "Content-Type: application/json" -d '{"nom": "Juan", "cognoms": "Pérez", "dni": "46099155W" , "edat": 30, "email": "juan.perez@example.com"}'
 ```
 
 ###### Actualitzar Usuari:
 ```bash
-curl -X PUT http://localhost:8080/appActivitats/users/1 \ -H "Content-Type: application/json" \ -d '{"nom": "Juan", "cognoms": "Pérez", "dni": "12345678A", "edat": 31, "email": "juan.perez@example.com"}' -w "\n"
+curl -X PUT http://localhost:8080/appActivitats/users/1 \ -H "Content-Type: application/json" \ -d '{"nom": "Juan", "cognoms": "Pérez", "dni": "12345678A", "edat": 31, "email": "juan.perez@example.com"}'
 ```
 
 ###### Obtenir Usuari:
@@ -63,7 +63,7 @@ curl -X DELETE http://localhost:8080/appActivitats/users/1 -w "\n"
 ```bash
 curl -X POST http://localhost:8080/appActivitats/activitats \
 -H "Content-Type: application/json" \
--d '{"nom": "Futbol", "descripcio": "Partit de futbol 11 contra 11", "capacitat_maxima": 22}' -w "\n"
+-d '{"nom": "Futbol", "descripcio": "Partit de futbol 11 contra 11", "capacitat_maxima": 22}'
 ```
 
 ###### Obtenir Activitat:
@@ -95,6 +95,6 @@ curl -X GET http://localhost:8080/appActivitats/activitats/exportar -w "\n"
 ```bash
 curl -X POST http://localhost:8080/appActivitats/activitats/importar \
 -H "Content-Type: application/json" \
--d '[{"nom": "Tennis", "descripcio": "Partit de tennis entre dos", "capacitat_maxima": 2}]' -w "\n"
+-d '[{"nom": "Tennis", "descripcio": "Partit de tennis entre dos", "capacitat_maxima": 2}]'
 ```
 
