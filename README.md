@@ -17,7 +17,7 @@ git clone <url_del_repositori>
 ```
 
 ### 2- Compilar el projecte:
-S'utilitza Makefile. Primer de tot d'ha de modificar el fitxer db_config.mk i canviar les variables per l'usuari i la contrassenya del sql. Aquest fitxer l'utilitzara el Makefile per fer la compilació.
+S'utilitza Makefile. Primer de tot s'ha de modificar el fitxer db_config.mk i canviar les variables per l'usuari i la contrassenya del sql. Aquest fitxer l'utilitzara el Makefile per fer la compilació.
 Per compilar el projecte, simplement cal posar `make` a la terminal i es crearà el binari `api`.Per borrar els arxius objecte `.o`,executa:
 ```bash
 make clean
